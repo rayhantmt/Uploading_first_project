@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:shopping_list/models/category.dart';
+import 'package:groceries/models/category.dart';
 
-const categories = {
+final categories = {
   Categories.vegetables: Category(
     'Vegetables',
     Color.fromARGB(255, 0, 255, 128),
