@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/data/categories.dart';
-import 'package:groceries/data/dummy_items.dart';
+
 import 'package:groceries/models/category.dart';
 import 'package:groceries/models/grocery_item.dart';
 
