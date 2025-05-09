@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:groceries/data/categories.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:groceries/models/category.dart';
-import 'package:groceries/models/grocery_item.dart';
+
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -16,14 +17,24 @@ class _NewItemState extends State<NewItem> {
   var _enteredname = '';
   var _enteredquantity = 1;
   var _selectedcatagory = categories[Categories.vegetables]!;
-  void _saveitem() {
+  void _saveitem()async {
     if (_formkey.currentState!.validate()) {
       _formkey.currentState!.save();
-      Navigator.of(context).pop(GroceryItem(
-          id: DateTime.now().toString(),
-          name: _enteredname,
-          quantity: _enteredquantity,
-          category: _selectedcatagory));
+      final url = Uri.https('flutterdemo-2ff5e-default-rtdb.firebaseio.com',
+          'Shopping-list.json');
+   final response= await  http.post(url,
+          headers: {'Value-type': 'firebase/josn'},
+          body: json.encode({
+            'name': _enteredname,
+            'quantity': _enteredquantity,
+            'category': _selectedcatagory.title,
+          }));
+
+      if(!context.mounted){
+        return;
+      }
+      print(response.body); 
+      Navigator.of(context).pop();
     }
   }
 
@@ -33,7 +44,6 @@ class _NewItemState extends State<NewItem> {
       appBar: AppBar(
         title: Text('Add Items'),
       ),
-      // backgroundColor: Colors.red,
       body: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Form(
@@ -86,24 +96,23 @@ class _NewItemState extends State<NewItem> {
                       Expanded(
                         child: DropdownButtonFormField(
                           value: _selectedcatagory,
-                         
                           items: [
                             for (final category in categories.entries)
                               DropdownMenuItem(
-                                value: category.value,
+                                  value: category.value,
                                   child: Row(
-                                children: [
-                                  Container(
-                                    height: 16,
-                                    width: 16,
-                                    color: category.value.color,
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(category.value.title)
-                                ],
-                              ))
+                                    children: [
+                                      Container(
+                                        height: 16,
+                                        width: 16,
+                                        color: category.value.color,
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(category.value.title)
+                                    ],
+                                  ))
                           ],
                           onChanged: (value) {
                             setState(() {
